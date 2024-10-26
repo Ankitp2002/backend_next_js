@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id      Int       @id @default(autoincrement())
+  name    String
+  password    String
+  email   String    @unique
+  role    String // Define roles as needed, e.g., "Author", "Reviewer", etc.
+  theses  Thesis[]  @relation("AuthorTheses")
+  reviews Thesis[]  @relation("ReviewerTheses")
+  Comment Comment[]
+}
+
+model Thesis {
+  id                 Int       @id @default(autoincrement())
+  title              String
+  abstract           String
+  contributorAuthors String
+  references         String
+  publishYear        String?
+  keyword            String
+  document           String
+  status             String
+  authorId           Int
+  reviewerId         Int? 
+
+  author   User      @relation("AuthorTheses", fields: [authorId], references: [id])
+  reviewer User?     @relation("ReviewerTheses", fields: [reviewerId], references: [id])
+  comments Comment[] @relation("ThesisComments") // Ensure this line exists
+}
+
+model Comment {
+  id        Int    @id @default(autoincrement())
+  comment   String
+  userId    Int
+  thesisId  Int
+
+  user      User   @relation(fields: [userId], references: [id])
+  thesis    Thesis @relation("ThesisComments", fields: [thesisId], references: [id]) // Ensure this line matches
+}
