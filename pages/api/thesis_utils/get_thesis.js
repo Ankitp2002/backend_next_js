@@ -1,13 +1,20 @@
 import { PrismaClient } from "@prisma/client";
+import { token_user_details } from "../user_utils/create_user";
 
 const prisma = new PrismaClient();
 
-async function get_author_thesis_status() {
+async function get_author_thesis_status(req) {
+  const token = req?.headers["authorization"]?.split(" ")[1];
+  let filter;
+  if (token) {
+    filter = await token_user_details(token);
+  }
   return await prisma.thesis.findMany({
     where: {
       status: {
         in: ["submitted", "reviewed"],
       },
+      ...(filter?.user_id && { authorId: filter.user_id }),
     },
     include: {
       author: true,
@@ -20,7 +27,7 @@ export async function getThesis(req) {
   try {
     let thesis;
     if (req?.query["status"] == "excluded") {
-      thesis = get_author_thesis_status();
+      thesis = get_author_thesis_status(req);
     } else {
       thesis = await prisma.thesis.findMany({
         include: {
