@@ -25,6 +25,9 @@ async function get_author_thesis_status(req, status_list) {
       reviewer: true,
       ...(status_list.includes("rejected") && { comments: true }), // Conditionally include comments
     },
+    orderBy: {
+      id: "desc", // Change to 'desc' for descending order
+    },
   });
 }
 
@@ -32,7 +35,11 @@ export async function getThesis(req) {
   try {
     let thesis;
     if (req?.query["status"] == "excluded") {
-      thesis = get_author_thesis_status(req, ["submitted", "reviewed"]);
+      thesis = get_author_thesis_status(req, [
+        "submitted",
+        "reviewed",
+        "rejected",
+      ]);
     } else if (req?.query["status"] == "published") {
       thesis = get_author_thesis_status(req, ["published"]);
     } else if (req?.query["status"] == "rejected") {
