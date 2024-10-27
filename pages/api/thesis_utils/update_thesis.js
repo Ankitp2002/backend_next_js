@@ -1,39 +1,46 @@
-import { Prisma } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
+import { token_user_details } from "../user_utils/create_user";
 
+const prisma = new PrismaClient();
 export async function updateThesis(req) {
-  const { id } = req.params;
-  const {
-    title,
-    abstract,
-    contributorAuthors,
-    references,
-    publishYear,
-    keyword,
-    document,
-    status,
-    authorId,
-    reviewerId,
-  } = req.body;
+  const id = req?.query["id"];
+  const { status, comment } = req.body;
+  let publishYear = null;
+  if (status == "published") {
+    publishYear = `${new Date().getFullYear()}-${(new Date().getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}`;
+  }
+  const token = req?.headers["authorization"]?.split(" ")[1];
+  let user;
+  if (token) {
+    user = await token_user_details(token);
+  } else {
+  }
+
   try {
-    const thesis = await Prisma.thesis.update({
+    const thesis = await prisma.thesis.update({
       where: { id: parseInt(id) },
       data: {
-        title,
-        abstract,
-        contributorAuthors,
-        references,
-        publishYear,
-        keyword,
-        document,
         status,
-        authorId,
-        reviewerId,
+        reviewerId: user.user_id,
+        publishYear,
       },
     });
-    return thesis;
+
+    // create comment
+    await prisma.comment.create({
+      data: {
+        comment,
+        userId: user.user_id,
+        thesisId: parseInt(id),
+      },
+    });
+
+    return { message: "Review status updated successfully" };
   } catch (error) {
     throw new Error("Failed to update thesis");
   } finally {
-    await Prisma.$disconnect();
+    await prisma.$disconnect();
   }
 }
