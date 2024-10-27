@@ -37,8 +37,8 @@ model Thesis {
   authorId           Int
   reviewerId         Int? 
 
-  author   User      @relation("AuthorTheses", fields: [authorId], references: [id])
-  reviewer User?     @relation("ReviewerTheses", fields: [reviewerId], references: [id])
+  author   User      @relation("AuthorTheses", fields: [authorId], references: [id],onDelete: Cascade)
+  reviewer User?     @relation("ReviewerTheses", fields: [reviewerId], references: [id],onDelete: Cascade)
   comments Comment[] @relation("ThesisComments") // Ensure this line exists
 }
 
@@ -48,6 +48,6 @@ model Comment {
   userId    Int
   thesisId  Int
 
-  user      User   @relation(fields: [userId], references: [id])
-  thesis    Thesis @relation("ThesisComments", fields: [thesisId], references: [id]) // Ensure this line matches
+  user      User   @relation(fields: [userId], references: [id],onDelete: Cascade)
+  thesis    Thesis @relation("ThesisComments", fields: [thesisId], references: [id],onDelete: Cascade) // Ensure this line matches
 }

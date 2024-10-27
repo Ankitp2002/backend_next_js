@@ -37,7 +37,7 @@ export default async function handler(req, res) {
     //================================================================
 
     if (req.method == "DELETE") {
-      thesis = await delThesis();
+      thesis = await delThesis(req);
     }
 
     //================================================================
