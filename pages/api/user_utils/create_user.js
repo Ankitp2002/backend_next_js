@@ -7,7 +7,11 @@ export async function token_user_details(token) {
     // Verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     // Attach user data to the request object
-    return { user_id: decoded.user_id, username: decoded.username };
+    return {
+      user_id: decoded.user_id,
+      username: decoded.username,
+      role: decoded.role,
+    };
   } catch (error) {
     return error;
   }

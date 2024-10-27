@@ -14,11 +14,16 @@ async function get_author_thesis_status(req, status_list) {
       status: {
         in: status_list,
       },
-      ...(filter?.user_id && { authorId: filter.user_id }),
+      ...(filter?.user_id
+        ? filter.role === "reviewer"
+          ? { reviewerId: filter.user_id }
+          : { authorId: filter.user_id }
+        : {}),
     },
     include: {
       author: true,
       reviewer: true,
+      ...(status_list.includes("rejected") && { comments: true }), // Conditionally include comments
     },
   });
 }
@@ -30,6 +35,8 @@ export async function getThesis(req) {
       thesis = get_author_thesis_status(req, ["submitted", "reviewed"]);
     } else if (req?.query["status"] == "published") {
       thesis = get_author_thesis_status(req, ["published"]);
+    } else if (req?.query["status"] == "rejected") {
+      thesis = get_author_thesis_status(req, ["rejected"]);
     } else {
       thesis = await prisma.thesis.findMany({
         include: {
