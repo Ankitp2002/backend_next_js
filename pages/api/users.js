@@ -2,8 +2,10 @@ import { createUser } from "./user_utils/create_user";
 import { delUser } from "./user_utils/del_user";
 import { getUser } from "./user_utils/get_user";
 import { updateUser } from "./user_utils/update_user";
+import cors, { runMiddleware } from "../../lib/cors";
 
 export default async function handler(req, res) {
+  await runMiddleware(req, res, cors);
   let thesis;
   try {
     //================================================================
