@@ -1,14 +1,16 @@
-import { Prisma } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
-export async function delUser(id) {
+const prisma = new PrismaClient();
+
+export async function delUser(req) {
   try {
-    const thesis = await Prisma.thesis.delete({
+    const id = req?.query["id"];
+    return await prisma.user.delete({
       where: { id: parseInt(id) },
     });
-    return thesis;
   } catch (error) {
     throw new Error("Failed to del thesis");
   } finally {
-    await Prisma.$disconnect();
+    await prisma.$disconnect();
   }
 }

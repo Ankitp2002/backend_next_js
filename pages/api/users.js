@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     //================================================================
 
     if (req.method == "GET") {
-      thesis = await getUser();
+      thesis = await getUser(req);
     }
 
     //================================================================
@@ -29,7 +29,7 @@ export default async function handler(req, res) {
     //================================================================
 
     if (req.method == "DELETE") {
-      thesis = await delUser(id);
+      thesis = await delUser(req);
     }
 
     //================================================================

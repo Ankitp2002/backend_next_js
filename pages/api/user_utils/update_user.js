@@ -1,10 +1,12 @@
-import { Prisma } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export async function updateUser(req) {
-  const { id } = req.params;
+  const id = req?.query["id"];
   const { name, email, password } = req.body;
   try {
-    const thesis = await Prisma.thesis.update({
+    return await prisma.user.update({
       where: { id: parseInt(id) },
       data: {
         name,
@@ -12,10 +14,9 @@ export async function updateUser(req) {
         password,
       },
     });
-    return thesis;
   } catch (error) {
     throw new Error("Failed to update thesis");
   } finally {
-    await Prisma.$disconnect();
+    await prisma.$disconnect();
   }
 }
