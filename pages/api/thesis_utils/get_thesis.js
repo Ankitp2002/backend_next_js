@@ -23,7 +23,11 @@ async function get_author_thesis_status(req, status_list) {
     include: {
       author: true,
       reviewer: true,
-      ...(status_list.includes("rejected") && { comments: true }), // Conditionally include comments
+      comments: {
+        include: {
+          user: true, // Include user details for each comment
+        },
+      }, // Conditionally include comments
     },
     orderBy: {
       id: "desc", // Change to 'desc' for descending order
@@ -49,6 +53,10 @@ export async function getThesis(req) {
         include: {
           author: true,
           reviewer: true,
+          comments: true,
+        },
+        orderBy: {
+          id: "desc", // Change to 'desc' for descending order
         },
       });
     }

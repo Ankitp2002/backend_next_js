@@ -5,22 +5,20 @@ const prisma = new PrismaClient();
 
 export async function createCommant(req) {
   try {
-    let user;
     const token = req?.headers["authorization"]?.split(" ")[1];
-
     if (token) {
-      user = await token_user_details(token);
-    } else {
+      const user = await token_user_details(token);
       const { comment, thesisId } = req.body;
-      user = await prisma.comment.create({
+      const comments = await prisma.comment.create({
         data: {
           comment,
-          userId: user.id,
+          userId: user.user_id,
           thesisId,
         },
       });
+      return { comment: comments.comment, userName: user.username };
     }
-    return user;
+    return {};
   } catch (error) {
     throw new Error(error);
   } finally {
