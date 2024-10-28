@@ -10,6 +10,8 @@ export async function token_user_details(token) {
     return {
       user_id: decoded.user_id,
       username: decoded.username,
+      email: decoded.email,
+      number: decoded.number,
       role: decoded.role,
     };
   } catch (error) {
