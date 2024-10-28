@@ -51,43 +51,73 @@ function parseFormData(rawData) {
   return parsedData;
 }
 
-export async function createThesis(req) {
-  const data = parseFormData(req.body);
-  // upload.single("document");
-  file_upload(data["filename"], data["file"]);
-  const {
-    title,
-    abstract,
-    contributorAuthors,
-    references,
-    publishYear,
-    keyword,
-    status,
-    authorId,
-    reviewerId,
-  } = data;
-
+async function incrementViewCount(thesisId) { 
   try {
-    const thesis = await prisma.thesis.create({
-      data: {
-        title,
-        abstract,
-        contributorAuthors,
-        references,
-        publishYear,
-        keyword,
-        document: data.filename,
-        status,
-        author: {
-          connect: { id: 1 }, // Connect to the existing author by ID
-        },
-        reviewer: reviewerId ? { connect: { id: reviewerId } } : undefined,
-      },
+    // Fetch the current view count
+    const thesis = await prisma.thesis.findUnique({
+      where: { id: thesisId },
+      select: { view_count: true },
     });
-    return thesis;
+
+    if (!thesis) {
+      throw new Error("Thesis not found");
+    }
+
+    // Increment the view count by 1
+    const updatedThesis = await prisma.thesis.update({
+      where: { id: thesisId },
+      data: { view_count: thesis.view_count + 1 },
+    });
+
+    console.log("Updated view count:", updatedThesis.view_count);
+    return updatedThesis.view_count;
   } catch (error) {
-    throw new Error(error);
-  } finally {
-    await prisma.$disconnect();
+    console.error("Error updating view count:", error);
+    throw error;
+  }
+}
+export async function createThesis(req) {
+  if (req?.query["for"]) {
+    incrementViewCount(req.body["paperId"]);
+    return true; // Assume successful view count increment for demo purposes. In a real-world scenario, you would handle the view count increment differently.
+  } else {
+    const data = parseFormData(req.body);
+    // upload.single("document");
+    file_upload(data["filename"], data["file"]);
+    const {
+      title,
+      abstract,
+      contributorAuthors,
+      references,
+      publishYear,
+      keyword,
+      status,
+      authorId,
+      reviewerId,
+    } = data;
+
+    try {
+      const thesis = await prisma.thesis.create({
+        data: {
+          title,
+          abstract,
+          contributorAuthors,
+          references,
+          publishYear,
+          keyword,
+          document: data.filename,
+          status,
+          author: {
+            connect: { id: 1 }, // Connect to the existing author by ID
+          },
+          reviewer: reviewerId ? { connect: { id: reviewerId } } : undefined,
+        },
+      });
+      return thesis;
+    } catch (error) {
+      throw new Error(error);
+    } finally {
+      await prisma.$disconnect();
+    }
   }
 }

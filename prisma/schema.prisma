@@ -33,8 +33,9 @@ model Thesis {
   keyword            String
   document           String
   status             String
-  authorId           Int
+  authorId           Int  
   reviewerId         Int? 
+  view_count         Int     @default(0)
 
   author   User      @relation("AuthorTheses", fields: [authorId], references: [id], onDelete: Cascade)
   reviewer User?     @relation("ReviewerTheses", fields: [reviewerId], references: [id], onDelete: Cascade)
