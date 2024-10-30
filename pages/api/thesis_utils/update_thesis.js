@@ -25,18 +25,9 @@ export async function updateThesis(req) {
         status,
         reviewerId: user.user_id,
         publishYear,
+        review_comment: comment,
       },
     });
-
-    // create comment
-    await prisma.comment.create({
-      data: {
-        comment,
-        userId: user.user_id,
-        thesisId: parseInt(id),
-      },
-    });
-
     return { message: "Review status updated successfully" };
   } catch (error) {
     throw new Error("Failed to update thesis");

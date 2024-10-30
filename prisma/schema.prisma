@@ -33,6 +33,7 @@ model Thesis {
   keyword            String
   document           String
   status             String
+  review_comment     String?
   authorId           Int  
   reviewerId         Int? 
   view_count         Int     @default(0)

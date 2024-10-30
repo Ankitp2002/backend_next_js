@@ -14,7 +14,7 @@ async function get_author_thesis_status(req, status_list) {
       status: {
         in: status_list,
       },
-      ...(filter?.user_id
+      ...(filter?.role !== "admin" && filter?.user_id
         ? filter.role === "reviewer"
           ? { reviewerId: filter.user_id }
           : { authorId: filter.user_id }

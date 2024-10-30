@@ -35,12 +35,7 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
-
-
-
-
-
-mkdir prisma prisma\migrations middleware models lib pages pages\api && echo. > prisma\schema.prisma && echo. > middleware\auth.js && echo. > models\Thesis.js && echo. > models\User.js && echo. > lib\prisma.js && echo. > pages\_app.js && echo. > pages\api\sync.js && echo. > pages\api\users.js && echo. > pages\api\users\customize_data.js && echo. > pages\api\theses.js && echo. > server.js && echo. > .env && echo. > next.config.js && echo. > package.json
+mkdir prisma prisma\migrations middleware models lib pages pages\api && echo. > prisma\schema.prisma && echo. > middleware\auth.js && echo. > models\Thesis.js && echo. > models\User.js && echo. > lib\prisma.js && echo. > pages_app.js && echo. > pages\api\sync.js && echo. > pages\api\users.js && echo. > pages\api\users\customize_data.js && echo. > pages\api\theses.js && echo. > server.js && echo. > .env && echo. > next.config.js && echo. > package.json
 
 npm install prisma @prisma/client mysql
 

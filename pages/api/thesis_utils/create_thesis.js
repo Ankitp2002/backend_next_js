@@ -51,7 +51,7 @@ function parseFormData(rawData) {
   return parsedData;
 }
 
-async function incrementViewCount(thesisId) { 
+async function incrementViewCount(thesisId) {
   try {
     // Fetch the current view count
     const thesis = await prisma.thesis.findUnique({
@@ -95,7 +95,6 @@ export async function createThesis(req) {
       authorId,
       reviewerId,
     } = data;
-
     try {
       const thesis = await prisma.thesis.create({
         data: {
@@ -108,7 +107,7 @@ export async function createThesis(req) {
           document: data.filename,
           status,
           author: {
-            connect: { id: 1 }, // Connect to the existing author by ID
+            connect: { id: authorId }, // Connect to the existing author by ID
           },
           reviewer: reviewerId ? { connect: { id: reviewerId } } : undefined,
         },
