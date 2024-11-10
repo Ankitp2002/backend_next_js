@@ -29,20 +29,19 @@ export async function updateThesis(req) {
         review_comment: comment,
       },
     });
-    if (status == "published") {
-      //Create Notification For Author
-      const author = await prisma.user.findMany({
-        where: {
-          id: thesis.authorId, // Assuming the role is stored in the 'role' field
-        },
-      });
+    //Create Notification For Author
+    const author = await prisma.user.findMany({
+      where: {
+        id: thesis.authorId, // Assuming the role is stored in the 'role' field
+      },
+    });
+    const role = status == "published" ? "user" : "author";
+    const message =
+      role == "user"
+        ? `New Thesis Published Title : ${thesis.title} by Author : ${author[0].name} Email : ${author[0].email}`
+        : `Please Chack Thesis Status Title : ${thesis.title}`;
 
-      createNotification(
-        "user",
-        `New Thesis Published Title : ${thesis.title} by Author : ${author[0].name} Email : ${author[0].email}`,
-        thesis.id
-      );
-    }
+    createNotification(role, message, thesis.id);
     return { message: "Review status updated successfully" };
   } catch (error) {
     throw new Error("Failed to update thesis");
