@@ -1,9 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { token_user_details } from "../user_utils/create_user";
-import { createNotification } from "../notification_utils/create_notification";
 
 const prisma = new PrismaClient();
-export async function updateThesis(req) {
+export async function updateNotification(req) {
   const id = req?.query["id"];
   const { status, comment } = req.body;
   let publishYear = null;
@@ -29,20 +28,6 @@ export async function updateThesis(req) {
         review_comment: comment,
       },
     });
-    if (status == "published") {
-      //Create Notification For Author
-      const author = await prisma.user.findMany({
-        where: {
-          id: thesis.authorId, // Assuming the role is stored in the 'role' field
-        },
-      });
-
-      createNotification(
-        "user",
-        `New Thesis Published Title : ${thesis.title} by Author : ${author[0].name} Email : ${author[0].email}`,
-        thesis.id
-      );
-    }
     return { message: "Review status updated successfully" };
   } catch (error) {
     throw new Error("Failed to update thesis");

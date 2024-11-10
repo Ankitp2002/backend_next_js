@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { upload } from "../../../lib/multerConfig";
 import path from "path";
 import fs from "fs";
+import { createNotification } from "../notification_utils/create_notification";
 const prisma = new PrismaClient();
 function file_upload(filename, base64Data) {
   // Decode Base64 string to binary data
@@ -112,6 +113,20 @@ export async function createThesis(req) {
           reviewer: reviewerId ? { connect: { id: reviewerId } } : undefined,
         },
       });
+
+      //Create Notification For Author
+      const author = await prisma.user.findMany({
+        where: {
+          id: authorId, // Assuming the role is stored in the 'role' field
+        },
+      });
+
+      createNotification(
+        "reviewer",
+        `Create New Thesis Title : ${thesis.title} by Author : ${author[0].name} Email : ${author[0].email}`,
+        thesis.id
+      );
+
       return thesis;
     } catch (error) {
       throw new Error(error);

@@ -44,5 +44,5 @@ npx prisma init
 DATABASE_URL="mysql://user:password@localhost:3306/database_name"
 
 npx prisma migrate dev --name init
-
+npx prisma migrate deploy
 npm run dev

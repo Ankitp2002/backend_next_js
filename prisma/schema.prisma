@@ -22,7 +22,11 @@ model User {
   theses  Thesis[]  @relation("AuthorTheses")
   reviews Thesis[]  @relation("ReviewerTheses")
   Comment Comment[]
+
+  // Add the reverse relation for notification audits
+  notificationAudits NotificationAudit[]
 }
+
 model Thesis {
   id                 Int       @id @default(autoincrement())
   title              String
@@ -41,6 +45,9 @@ model Thesis {
   author   User      @relation("AuthorTheses", fields: [authorId], references: [id], onDelete: Cascade)
   reviewer User?     @relation("ReviewerTheses", fields: [reviewerId], references: [id], onDelete: Cascade)
   comments Comment[] @relation("ThesisComments")
+  
+  // Add the reverse relation for notifications
+  notifications Notification[] @relation("ThesisNotifications")
 }
 
 model Comment {
@@ -51,4 +58,24 @@ model Comment {
 
   user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   thesis    Thesis @relation("ThesisComments", fields: [thesisId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id       Int     @id @default(autoincrement())
+  title    String
+  thesisId Int
+
+  // Add reverse relation with the name "ThesisNotifications"
+  thesis   Thesis  @relation("ThesisNotifications", fields: [thesisId], references: [id], onDelete: Cascade)
+  audits   NotificationAudit[]
+}
+
+model NotificationAudit {
+  id             Int          @id @default(autoincrement())
+  notificationId Int
+  userId         Int
+  status         Boolean      @default(false)
+
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
