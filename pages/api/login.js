@@ -1,10 +1,15 @@
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
-import cors, { runMiddleware } from "../../lib/cors";
+import corsMiddleware from "../../lib/cors";
 
 const prisma = new PrismaClient();
 export default async function handler(req, res) {
-  await runMiddleware(req, res, cors);
+  await corsMiddleware(req, res);
+  if (req.method === "OPTIONS") {
+    // Handle preflight request
+    return res.status(200).end(); // Must respond to OPTIONS requests
+  }
+
   if (req.method != "POST") {
     return res.status(405).json({ message: "Method not allowed" });
   }

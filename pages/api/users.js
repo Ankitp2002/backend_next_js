@@ -2,13 +2,17 @@ import { createUser } from "./user_utils/create_user";
 import { delUser } from "./user_utils/del_user";
 import { getUser } from "./user_utils/get_user";
 import { updateUser } from "./user_utils/update_user";
-import cors, { runMiddleware } from "../../lib/cors";
+import corsMiddleware from "../../lib/cors";
 
 export default async function handler(req, res) {
-  await runMiddleware(req, res, cors);
+  await corsMiddleware(req, res);
   let thesis;
   try {
     //================================================================
+    if (req.method === "OPTIONS") {
+      // Handle preflight request
+      return res.status(200).end(); // Must respond to OPTIONS requests
+    }
 
     if (req.method == "GET") {
       thesis = await getUser(req);

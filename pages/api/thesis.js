@@ -1,3 +1,4 @@
+import corsMiddleware from "../../lib/cors";
 import cors, { runMiddleware } from "../../lib/cors";
 import { createThesis } from "./thesis_utils/create_thesis";
 import { delThesis } from "./thesis_utils/del_thesis";
@@ -13,10 +14,14 @@ export const config = {
 };
 
 export default async function handler(req, res) {
-  await runMiddleware(req, res, cors);
+  await corsMiddleware(req, res);
   let thesis;
   try {
     //================================================================
+    if (req.method === "OPTIONS") {
+      // Handle preflight request
+      return res.status(200).end(); // Must respond to OPTIONS requests
+    }
 
     if (req.method == "GET") {
       thesis = await getThesis(req);
