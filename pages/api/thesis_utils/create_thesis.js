@@ -123,7 +123,7 @@ export async function createThesis(req) {
 
       createNotification(
         "reviewer",
-        `Create New Thesis Title : ${thesis.title} by Author : ${author[0].name} Email : ${author[0].email}`,
+        `The author has uploaded a new thesis Title : ${thesis.title}, Author : ${author[0].name} Email : ${author[0].email} \n Please review it at your earliest convenience.`,
         thesis.id
       );
 
