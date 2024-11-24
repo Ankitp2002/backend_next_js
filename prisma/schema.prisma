@@ -25,6 +25,8 @@ model User {
 
   // Add the reverse relation for notification audits
   notificationAudits NotificationAudit[]
+  messages  ChetModel[]  @relation("SenderMessages")
+  receivedMessages ChetModel[] @relation("ReceiverMessages")
 }
 
 model Thesis {
@@ -78,4 +80,14 @@ model NotificationAudit {
 
   notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ChetModel {
+  id        Int      @id @default(autoincrement())
+  senderId  Int
+  receiverId Int
+  message   Json     // Store messages in a JSON field
+  
+  sender    User     @relation("SenderMessages", fields: [senderId], references: [id])
+  receiver  User     @relation("ReceiverMessages", fields: [receiverId], references: [id])
 }
